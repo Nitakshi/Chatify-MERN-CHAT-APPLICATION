@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 6,
+        minlength: 8,
     },
     profilePic: {
         type: String,
@@ -27,17 +27,16 @@ userSchema.methods.matchPassword = async function(enteredPassword){
 }
 
 //Middleware: to hash password before saving
-userSchema.pre("save", async (next) => {
-    if(this.isModified('password')){
-        try{
+userSchema.pre("save", async function(next){
+    if(!this.isModified('password')){ return (next);}
+    try{
             const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(this.password, salt);
+            this.password = await bcrypt.hash(this.password, salt);
+            next();
         }
         catch(error){
-            return next(error);
+            next(error);
         }
-    }
-    return next();
 })
 
 const User = mongoose.model("User", userSchema);

@@ -1,38 +1,27 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
-import bcrypt from "bcryptjs";
+import { registerValidation, loginValidation } from "../validators/auth.validator.js";
 
 // Signup controller
 export const signup = async (req,res) => {
-    const {email, fullName, password} = req.body;
-    try{
-        // validate the input
-        if(!email || !fullName || !password){
-            return res.status(400).json({message: "All fields are required"});
-        }
-        if(password.length < 6){
-            return res.status(400).json({message: "Password must be atleast 6 characters long"});
-        }
+    const {error, value} = registerValidation(req.body);
+    if(error){
+       return res.status(400).json({message: error.details[0].message});
+    }
 
-        const formattedEmail = email.trim().toLowerCase();
-        //Check if email is valid
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if(!emailRegex.test(formattedEmail)){
-            return res.status(400).json({message: "Invalid email format"});
-        }
+    try{
+        const {email, fullName, password, profilePic} = value;
 
         // check if user already exists
-        const user = await User.findOne({email: formattedEmail});
+        const user = await User.findOne({email});
         if(user) return res.status(400).json({message: "User already exists"});
         
         // create a new user
-        const salt = await bcrypt.genSalt(10); 
-        const hashedPassword = await bcrypt.hash(password, salt); // hash the password before saving to database
-
         const newUser = new User({
-            email: formattedEmail,
+            email,
             fullName,
-            password: hashedPassword,
+            password,
+            profilePic,
         })
 
         if(newUser){
@@ -45,10 +34,6 @@ export const signup = async (req,res) => {
                 profilePic: newUser.profilePic,
             })
         }
-        else{
-            console.log("Error in signup controller"+ error.message);
-            return res.status(400).json({ message: "Invalid user data"});
-        }
     }
     catch(error){
         console.log("Error in signup: "+ error);
@@ -58,16 +43,17 @@ export const signup = async (req,res) => {
 
 //Login Handler
 export const login = async (req,res) => {
-    const {email, password} = req.body;
-    try{
-        if(!email || !password){
-            return res.status(400).json({message: "All fields are required"});
-        }
+    const {error,value} = loginValidation(req.body);
+    if(error){
+       return res.status(400).json({message: error.details[0].message});
+    }
 
+    try{
+        const {email, password} = value;
         const user = await User.findOne({email});
         if(!user) return res.status(400).json({message: "Invalid Credentials"});
 
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        const isPasswordCorrect = await user.matchPassword(password);
         if(!isPasswordCorrect) return res.status(400).json({message: "Invalid Credentials"});
 
         generateToken(user._id,res);
@@ -77,6 +63,7 @@ export const login = async (req,res) => {
             email: user.email,
             profilePic: user.profilePic,
         });
+
     }catch(error){
         console.log("Error in login controller: "+ error.message);
         return res.status(500).json({message: "Internal Server Error"});
