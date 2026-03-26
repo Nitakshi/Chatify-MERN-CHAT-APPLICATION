@@ -13,16 +13,24 @@ export const signup = async (req,res) => {
         if(password.length < 6){
             return res.status(400).json({message: "Password must be atleast 6 characters long"});
         }
+
+        const formattedEmail = email.trim().toLowerCase();
+        //Check if email is valid
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!emailRegex.test(formattedEmail)){
+            return res.status(400).json({message: "Invalid email format"});
+        }
+
         // check if user already exists
-        const user = await User.findOne({email});
+        const user = await User.findOne({email: formattedEmail});
         if(user) return res.status(400).json({message: "User already exists"});
-    
+        
         // create a new user
         const salt = await bcrypt.genSalt(10); 
         const hashedPassword = await bcrypt.hash(password, salt); // hash the password before saving to database
 
         const newUser = new User({
-            email,
+            email: formattedEmail,
             fullName,
             password: hashedPassword,
         })
@@ -43,6 +51,7 @@ export const signup = async (req,res) => {
         }
     }
     catch(error){
+        console.log("Error in signup: "+ error);
         return res.status(500).json({message: "Internal Server Error"});
     }
 };
