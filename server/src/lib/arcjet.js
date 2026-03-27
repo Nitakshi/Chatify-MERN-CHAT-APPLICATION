@@ -20,7 +20,7 @@ const aj = arcjet({
     // Rate limit rule using sliding window algorithm
     slidingWindow({
         mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-        max: 50, // Max 100 requests
+        max: 100, // Max 100 requests
         interval: 60, // Per 60 seconds per IP address
     }),
   ],
