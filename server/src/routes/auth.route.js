@@ -4,7 +4,8 @@ import { protectRoute } from "../middlewares/auth.middleware.js";
 import { arcjetProtection } from "../middlewares/arcjet.middleware.js";
 
 const router = Router();
-router.use(arcjetProtection); // Apply Arcjet protection to all routes in this router. 
+//TODO: Uncomment 
+// router.use(arcjetProtection); // Apply Arcjet protection to all routes in this router. 
 
 router.post("/signup",signup);
 router.post('/login',arcjetProtection, login);

@@ -4,6 +4,7 @@ import {connectDB} from "./lib/db.js";
 import path from "path";
 import { ENV } from "./lib/env.js";
 import cookieParser from "cookie-parser";
+import messageRoutes from "./routes/message.route.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -13,7 +14,8 @@ app.use(express.json({limit: "5mb"})); //Enables your Express application to rea
 app.use(express.urlencoded({limit:"5mb",extended: true})); //Enables your Express application to read and process URL-encoded data sent from clients (e.g., form submissions). The extended: true option allows for rich objects and arrays to be encoded into the URL-encoded format, using the qs library.
 app.use(cookieParser()); //Enables your Express application to read and process cookies sent from clients. It parses the Cookie header and populates req.cookies with an object keyed by the cookie names. This is essential for handling authentication tokens, session IDs, and other data stored in cookies.
 
-app.use("/api/auth", authRoutes); 
+app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes); 
 
 //make ready for deployment 
 if(ENV.NODE_ENV === "production"){
