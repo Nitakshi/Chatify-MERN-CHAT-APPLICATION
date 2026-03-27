@@ -34,6 +34,8 @@ export const signup = async (req,res) => {
                 profilePic: newUser.profilePic,
             })
         }
+
+        //todo: send a welcome email to user
     }
     catch(error){
         console.log("Error in signup: "+ error);
