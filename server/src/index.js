@@ -9,8 +9,8 @@ const app = express();
 const __dirname = path.resolve();
 
 //Middlewares
-app.use(express.json()); //Enables your Express application to read and process JSON data sent from clients (e.g., via POST, PUT, or PATCH requests)
-app.use(express.urlencoded({extended: true})); //Enables your Express application to read and process URL-encoded data sent from clients (e.g., form submissions). The extended: true option allows for rich objects and arrays to be encoded into the URL-encoded format, using the qs library.
+app.use(express.json({limit: "5mb"})); //Enables your Express application to read and process JSON data sent from clients (e.g., via POST, PUT, or PATCH requests)
+app.use(express.urlencoded({limit:"5mb",extended: true})); //Enables your Express application to read and process URL-encoded data sent from clients (e.g., form submissions). The extended: true option allows for rich objects and arrays to be encoded into the URL-encoded format, using the qs library.
 app.use(cookieParser()); //Enables your Express application to read and process cookies sent from clients. It parses the Cookie header and populates req.cookies with an object keyed by the cookie names. This is essential for handling authentication tokens, session IDs, and other data stored in cookies.
 
 app.use("/api/auth", authRoutes); 

@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import { registerValidation, loginValidation } from "../validators/auth.validator.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import {ENV} from "../lib/env.js";
+import cloudinary from "../lib/cloudinary.js";
 
 // Signup controller
 export const signup = async (req,res) => {
@@ -94,6 +95,35 @@ export const logout = (req,res) => {
     }
 }
 
-export const updateProfile = (req,res) => {
-    
+export const updateProfile = async (req,res) => {
+    try{
+        const {profilePic} = req.body;
+        if(!profilePic) return res.status(400).json({message: "Profile Pic is required"});
+
+        const userId = req.user._id;
+        const uploadResponse = await cloudinary.uploader.upload(profilePic,{
+            folder: "profile_pics", //Organizes uploaded images into a folder named "profile_pics" in your Cloudinary account, making it easier to manage and retrieve profile pictures.
+            transformation: [
+                {width: 500, height: 500, crop: "limit"},
+                {quality: "auto"}, //Automatic compression to optimize image size without compromising quality.
+                {fetch_format: "auto"}, //Automatic format selection to serve the most efficient image format based on the client's browser capabilities.
+            ]
+        }); // Upload the new profile picture to Cloudinary and get the secure URL of the uploaded image.
+        const updatedUser = await User.findByIdAndUpdate(userId, {profilePic: uploadResponse.secure_url},{new:true}).select("-password"); // Update the user's profile picture in the database with the new URL and return the updated user document.   
+        return res.status(200).json(updatedUser);
+    }
+    catch(error){
+        console.log("Error in update profile: ",error);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+export const checkAuth = async (req,res) => {
+    try{
+        return res.status(200).json(req.user); //This is used to verify that the user is logged in and to retrieve their profile information.
+    }
+    catch(error){
+        console.error("Error in checkAuth: ", error);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
 }
