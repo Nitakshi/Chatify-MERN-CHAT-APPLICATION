@@ -2,6 +2,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import { registerValidation, loginValidation } from "../validators/auth.validator.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import {ENV} from "../lib/env.js";
 
 // Signup controller
 export const signup = async (req,res) => {
@@ -30,7 +31,7 @@ export const signup = async (req,res) => {
             generateToken(newUser._id,res); 
             //send a welcome email to user
             try{
-                await sendWelcomeEmail(savedUser.fullName,savedUser.email,process.env.CLIENT_URL);
+                await sendWelcomeEmail(savedUser.fullName,savedUser.email,ENV.CLIENT_URL);
             }
             catch(err){
                 console.error("Failed to send welcome email: ", err);

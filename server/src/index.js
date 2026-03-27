@@ -3,6 +3,7 @@ import authRoutes from "./routes/auth.route.js";
 import dotenv from "dotenv";
 import {connectDB} from "./lib/db.js";
 import path from "path";
+import { ENV } from "./lib/env.js";
 
 dotenv.config();
 const app = express();
@@ -14,7 +15,7 @@ app.use(express.json()); //Enables your Express application to read and process 
 app.use("/api/auth", authRoutes);
 
 //make ready for deployment (Servalla)
-if(process.env.NODE_ENV === "production"){
+if(ENV.NODE_ENV === "production"){
     app.use(express.static(path.join(__dirname,"../client/dist"))); //“Serve all files inside client/dist as static files”
     //For ANY route not handled above, send index.html (Any other routes other than above)
     app.get("*", (req,res) => {
@@ -22,7 +23,7 @@ if(process.env.NODE_ENV === "production"){
     })
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = ENV.PORT || 3000;
 connectDB()
     .then(() => {
         app.listen(PORT, () => {console.log("Server running on port:",PORT)})
