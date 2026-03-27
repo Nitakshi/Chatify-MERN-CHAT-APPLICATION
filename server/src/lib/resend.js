@@ -6,5 +6,5 @@ export const resendClient = new Resend(ENV.RESEND_API_CLIENT); //create a new in
 
 export const sender = { // define the sender's email and name using environment variables
     email: ENV.EMAIL_FROM,
-    name: ENV.EMAIL_FROM_NAME
+    name: ENV.EMAIL_FROM_NAME || "Chatify Team", 
 }

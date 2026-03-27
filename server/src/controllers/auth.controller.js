@@ -30,12 +30,9 @@ export const signup = async (req,res) => {
             const savedUser = await newUser.save(); //save new user in database
             generateToken(newUser._id,res); 
             //send a welcome email to user
-            try{
-                await sendWelcomeEmail(savedUser.fullName,savedUser.email,ENV.CLIENT_URL);
-            }
-            catch(err){
-                console.error("Failed to send welcome email: ", err);
-            }
+            sendWelcomeEmail(savedUser.fullName, savedUser.email, ENV.CLIENT_URL).catch((err) => {
+                console.error("Error sending welcome email: ", err);
+            });
         }
 
         return res.status(201).json({
