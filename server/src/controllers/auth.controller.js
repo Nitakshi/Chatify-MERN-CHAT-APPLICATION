@@ -80,6 +80,9 @@ export const login = async (req,res) => {
 //Logout Handler
 export const logout = (req,res) => {
     try{
+        if(!req.cookies?.jwt){ // Check if the JWT cookie exists in the request. If it doesn't, it means the user is not logged in.
+            return res.status(400).json({message: "No user logged in"});
+        }
         res.cookie("jwt", "",{maxAge:0});
         return res.status(200).json({message: "Logged out successfully"});
     }
