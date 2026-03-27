@@ -1,6 +1,7 @@
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import { registerValidation, loginValidation } from "../validators/auth.validator.js";
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 
 // Signup controller
 export const signup = async (req,res) => {
@@ -25,20 +26,26 @@ export const signup = async (req,res) => {
         })
 
         if(newUser){
-            await newUser.save(); //save new user in database
+            const savedUser = await newUser.save(); //save new user in database
             generateToken(newUser._id,res); 
-            return res.status(201).json({
+            //send a welcome email to user
+            try{
+                await sendWelcomeEmail(savedUser.fullName,savedUser.email,process.env.CLIENT_URL);
+            }
+            catch(err){
+                console.error("Failed to send welcome email: ", err);
+            }
+        }
+
+        return res.status(201).json({
                 _id: newUser._id,
                 email: newUser.email,
                 fullName: newUser.fullName,
                 profilePic: newUser.profilePic,
-            })
-        }
-
-        //todo: send a welcome email to user
+        });
     }
     catch(error){
-        console.log("Error in signup: "+ error);
+        console.error("Error in signup: "+ error);
         return res.status(500).json({message: "Internal Server Error"});
     }
 };
@@ -67,7 +74,7 @@ export const login = async (req,res) => {
         });
 
     }catch(error){
-        console.log("Error in login controller: "+ error.message);
+        console.error("Error in login controller: "+ error.message);
         return res.status(500).json({message: "Internal Server Error"});
     }
 }
@@ -79,7 +86,7 @@ export const logout = (req,res) => {
         return res.status(200).json({message: "Logged out successfully"});
     }
     catch(error){
-        console.log("Error in logout handler: ", error.message);
+        console.error("Error in logout handler: ", error.message);
         return res.status(500).json({message: "Internal Server Error"});
     }
 }
