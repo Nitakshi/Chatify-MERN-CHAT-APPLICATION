@@ -5,7 +5,7 @@ import { MessageCircleIcon, LockIcon, MailIcon, UserIcon, LoaderIcon } from "luc
 import { Link } from "react-router";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
-function SignUpPage() {
+function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" }); //store form data
   const { login, isLoggingIn } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -126,4 +126,4 @@ function SignUpPage() {
     </div>
   );
 }
-export default SignUpPage;
+export default LoginPage;
