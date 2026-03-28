@@ -3,7 +3,11 @@ import { Routes, Route } from 'react-router-dom'
 
 const App = () => {
   return (
-    <h1>App</h1>
+    <div>
+      <h1 className='text-3xl font-bold underline text-red-500'> Hello World!</h1>
+      <button className='btn btn-primary'> My button</button>
+    </div>
+    
   )
 }
 
