@@ -12,7 +12,7 @@ export const registerValidation = (data) => {
         'string.base': 'Full name must be a string',
         'string.min': 'Full name must be at least 3 characters long',
         'string.pattern.base':
-          'Full name must only contain alphabets and spaces (no emojis, digits, or symbols)',
+          'Full name must only contain alphabets and spaces',
         'any.required': 'Full name is required',
       }),
 
@@ -68,6 +68,7 @@ export const loginValidation = (data) => {
 
     password: joi.string().trim().min(8).required().messages({
       'string.base': 'Password must be a string',
+      'string.min': 'Password must be atleast 8 characters long',
       'any.required': 'Password is required',
     }),
   });
