@@ -1,17 +1,15 @@
 import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore"
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
-import NoConversationPlaceholder from "./NoConversationPlaceholder";
 
 function ContactList() {
-    const {getAllContacts, allContacts, isUserLoading} = useChatStore();
+    const {getAllContacts, allContacts, isUsersLoading, setSelectedUser} = useChatStore();
     
     useEffect(() => {
         getAllContacts();
     },[getAllContacts]);
 
-    if(isUserLoading) return <UsersLoadingSkeleton/>;
-    if(allContacts.length == 0) return <NoConversationPlaceholder/>;
+    if(isUsersLoading) return <UsersLoadingSkeleton/>;
 
   return (
     <>
