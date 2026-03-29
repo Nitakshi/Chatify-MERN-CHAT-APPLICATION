@@ -73,7 +73,8 @@ function ProfileHeader() {
                     </button>
 
                 </div>
-            </div>
+            </div> 
+            
         </div>
     )
 }
