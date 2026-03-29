@@ -8,7 +8,7 @@ const router = Router();
 // router.use(arcjetProtection); // Apply Arcjet protection to all routes in this router. 
 
 router.post("/signup",signup);
-router.post('/login',arcjetProtection, login);
+router.post('/login',arcjetProtection, login); //TODO add arcjetProtection here
 router.post('/logout',logout); //logout has to be post method because it modifies the server state by clearing the authentication cookie. Using POST for logout is a common practice to ensure that the action is intentional and not triggered by web crawlers or accidental clicks, which can happen with GET requests.
 
 router.put("/update-profile", protectRoute, updateProfile);
