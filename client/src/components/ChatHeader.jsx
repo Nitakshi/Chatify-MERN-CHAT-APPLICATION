@@ -20,14 +20,14 @@ function ChatHeader() {
             <div className='flex items-center space-x-3'>
                 {/* TODO:  Socket io */}
                 <div className='avatar online'>
-                    <div className='w-12 rounded-full'>
+                    <div className='w-14 sm:w-16 rounded-full'>
                         <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName}></img>
                     </div>
                 </div>
 
                 <div>
-                    <h2 className='text-slate-200 text-lg'>{selectedUser.fullName}</h2>
-                    <p className='text-slate-400 text-sm'>Online</p>
+                    <h2 className='text-slate-200 text-xl sm:text-2xl font-semibold'>{selectedUser.fullName}</h2>
+                    <p className='text-slate-400 text-base sm:text-lg'>Online</p>
                 </div>
             </div>
 
