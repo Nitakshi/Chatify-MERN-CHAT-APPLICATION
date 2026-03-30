@@ -8,9 +8,10 @@ import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
 
 
 function ChatContainer() {
-  const { messages, getMessagesByUserId, selectedUser, isMessagesLoading } = useChatStore();
+  const { messages, getMessagesByUserId, selectedUser, isMessagesLoading, subscribeToMessages, unsubscribeFromMessages} = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
+  
 
   // 1. Always work with a sorted version of messages
   const sortedMessages = [...messages].sort(
@@ -19,6 +20,9 @@ function ChatContainer() {
 
   useEffect(() => { //fetch messages when selected user changes
     if (selectedUser?._id) getMessagesByUserId(selectedUser._id);
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
   }, [selectedUser?._id, getMessagesByUserId]);
 
   useEffect(() => { //scroll to bottom whenever messages change

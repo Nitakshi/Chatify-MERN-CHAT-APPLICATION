@@ -9,6 +9,7 @@ function ProfileHeader() {
     const {logout, updateProfile, authUser} = useAuthStore();
     const {isSoundEnabled, toggleSound} = useChatStore();
     const [selectedImg, setSelectedImg] = useState(null);
+    const {onlineUsers} = useAuthStore();
 
     const fileInputRef = useRef(); //useRef() is used to reference the hidden file input element, allowing us to trigger it programmatically when the user clicks on the avatar.
 

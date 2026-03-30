@@ -2,6 +2,7 @@ import "dotenv/config";
 
 export const ENV = Object.freeze({ // Freeze the ENV object to prevent modifications at runtime
     PORT: process.env.PORT,
+    NODE_ENV: process.env.NODE_ENV,
     MONGO_URI: process.env.MONGO_URI,
     JWT_SECRET: process.env.JWT_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
