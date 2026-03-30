@@ -16,11 +16,11 @@ function ChatHeader() {
     },[setSelectedUser]);
 
     return (
-        <div className='flex justify-between items-center bg-slate-800/50 border-b border-slate-700/50 max-h-[84px] px-6 flex-1'>
+        <div className='flex justify-between items-center bg-slate-800/50 border-b border-slate-700/50 max-h-[86px] px-6 flex-1'>
             <div className='flex items-center space-x-3'>
                 {/* TODO:  Socket io */}
                 <div className='avatar online'>
-                    <div className='w-14 sm:w-16 rounded-full'>
+                    <div className='w-14 sm:w-14 rounded-full'>
                         <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName}></img>
                     </div>
                 </div>

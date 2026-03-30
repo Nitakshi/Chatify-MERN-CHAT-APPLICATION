@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
+import { useAuthStore } from "./useAuthStore";
+import toast from "react-hot-toast";
 
 export const useChatStore = create((set, get) => ({
     allContacts: [],
@@ -60,18 +62,37 @@ export const useChatStore = create((set, get) => ({
             set({isMessagesLoading: false});
         }
     },
-    
-    getMessagesByUserId : async (userId) => {
-        set({isMessagesLoading: true});
+
+    sendMessage: async (messageData) => {
+        const {selectedUser, messages} = get();
+        const {authUser} = useAuthStore.getState();
+
+        if (!selectedUser?._id) {
+            toast.error("Select a user to send a message");
+            return;
+        }
+
+        const tempId = `temp-${Date.now()}`;
+        const optimisticMessage = {
+            _id: tempId,
+            senderId: authUser?._id,
+            receiverId: selectedUser._id,
+            text: messageData.text,
+            image: messageData.image,
+            createdAt: new Date().toISOString(),
+            isOptimistic: true,
+        }
+        //immediately update the ui by adding the message
+        set({messages: [...messages, optimisticMessage]});
+
         try{
-            const res = await axiosInstance.get(`/messages/${userId}`);
-            set({messages: res.data});
+            const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+            // Replace temp message with real data from server
+            set({messages: messages.concat(res.data)});
         }
         catch(error){
-            toast.error(error.response?.data?.message || "Something went wrong");
-        }
-        finally{
-            set({isMessagesLoading: false});
+            set({messages: messages});
+            toast.error(error.response?.data?.message || "Message failed to send");
         }
     }
 }));

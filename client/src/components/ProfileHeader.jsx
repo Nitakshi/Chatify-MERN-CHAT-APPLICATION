@@ -26,7 +26,7 @@ function ProfileHeader() {
     }
 
     return (
-        <div className='p-6 border-b border-slate-700/50'>
+        <div className='p-6 border-b border-slate-700/50 max-h-[86px]'>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
 
@@ -57,7 +57,7 @@ function ProfileHeader() {
                     {/* LOGOUT BUTTON */}
                     <button className='text-slate-400 hover:text-slate-200 transition-colors'
                         onClick={logout}>
-                        <LogOutIcon className='size-7'></LogOutIcon>
+                        <LogOutIcon className='size-6'></LogOutIcon>
                     </button>
 
                     {/* SOUND TOGGLE BUTTON */}
@@ -69,7 +69,7 @@ function ProfileHeader() {
                             mouseClickSound.play().catch((error) => console.log("Audio play failed: ", error))
                             toggleSound();
                         }}>
-                           {isSoundEnabled ? (<Volume2Icon className='size-7'/>) : (<VolumeOffIcon className='size-7'/>)}
+                           {isSoundEnabled ? (<Volume2Icon className='size-6'/>) : (<VolumeOffIcon className='size-6'/>)}
                     </button>
 
                 </div>
