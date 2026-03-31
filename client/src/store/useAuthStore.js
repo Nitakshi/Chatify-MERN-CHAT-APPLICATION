@@ -100,45 +100,24 @@ export const useAuthStore = create((set,get) => ({
     },
 
     connectSocket: () => {
-        const { authUser, socket } = get();
+        const { authUser} = get();
+        if(!authUser || get().socket?.connected) return;
 
-        if (!authUser) return;
-
-        // Reuse the existing socket instead of creating a new one each time
-        if (socket) {
-            if (socket.connected) return;
-            socket.connect();
-            return;
-        }
-
-        const newSocket = io(BASE_URL, {
-            query: {
-                userId: authUser._id,
-            },
+        const socket = io(BASE_URL, {
             withCredentials: true,
-            autoConnect: false,
-            transports: ["websocket"],
         });
+        
+        socket.connect();
 
-        newSocket.on("getOnlineUsers", (userIds) => {
-            set({ onlineUsers: userIds });
+        set({socket});
+
+        //listen for online users event
+        socket.on("getOnlineUsers", (userIds) => {
+            set({onlineUsers: userIds});
         });
-
-        newSocket.on("disconnect", () => {
-            set({ onlineUsers: [] });
-        });
-
-        set({ socket: newSocket });
-        newSocket.connect();
     },
 
     disconnectSocket: () => {
-        const { socket } = get();
-
-        if (socket) {
-            socket.off("getOnlineUsers");
-            socket.disconnect();
-            set({ socket: null, onlineUsers: [] });
-        }
-    }
+        if(get().socket?.connected) get().socket.disconnect();
+    },
 }));

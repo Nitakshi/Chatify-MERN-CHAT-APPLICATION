@@ -27,21 +27,19 @@ const userSocketMap = {}; //store value in the form of {userId: socketId}
 
 io.on("connection", (socket) => {
     // console.log("A user is connected", socket.user.fullName);
-    const userId = socket.userId;
+   const userId = socket.userId;
+   userSocketMap[userId] = socket.id;
 
-    if(!userSocketMap[userId]) userSocketMap[userId] = new Set();
-    userSocketMap[userId].add(socket.id);
+   //broadcast message to all connected clients
+   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-    //io.emit() is used to send events to all connected clients
+   //with socket.on we listen for events from clients
+   socket.on("disconnect", () => {
+    console.log("A user disconnected", socket.user.fullName);
+    delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+   });
 
-    //with socket.on we listen for events from clients
-    socket.on("disconnect", () => { //when a user disconnects
-        // console.log("A user disconnected", socket.user.fullName);
-        userSocketMap[userId]?.delete(socket.id);
-        if(userSocketMap[userId]?.size === 0) delete userSocketMap[userId]; //if no more sockets for that user, remove from map
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    });
 });
 
 export {io, app,server};
