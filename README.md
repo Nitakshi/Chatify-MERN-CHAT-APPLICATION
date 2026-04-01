@@ -1,6 +1,6 @@
 # 💬 Real-Time Chat App (MERN + Socket.io)
 
-A full-stack real-time chat application built using the **MERN stack** with **Socket.io** for instant messaging. This project focuses on scalability, clean architecture, and production-ready features.
+A full-stack real-time chat application built using the **MERN stack** with **Socket.io** for instant messaging. This project focuses on clean architecture and production-ready features.
 
 ---
 
@@ -9,7 +9,13 @@ A full-stack real-time chat application built using the **MERN stack** with **So
 <img src="./client/public/loginPage.png" width="700"/>
 
 ---
+### Chat Interface And Features
 
+<img src="./client/public/messageSent.png" width="700"/>
+<img src="./client/public/emojis.png" width="700"/>
+<img src="./client/public/deleteAccount.png" width="700"/>
+
+---
 ## 🚀 Features
 
 - 🔐 Custom JWT Authentication (no third-party auth)
@@ -23,7 +29,7 @@ A full-stack real-time chat application built using the **MERN stack** with **So
 - 🚦 API Rate Limiting (Arcjet)
 - 🎨 Beautiful UI with React, Tailwind CSS & DaisyUI
 - 🧠 Zustand for State Management
-- 🔧 Git & GitHub Workflow (branches, PRs, merges)
+- 🔧 Git & GitHub Workflow (branches, merges)
 
 ---
 
