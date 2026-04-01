@@ -22,8 +22,8 @@ function ChatHeader() {
         <div className='flex justify-between items-center bg-slate-800/50 border-b border-slate-700/50 max-h-[86px] px-6 flex-1'>
             <div className='flex items-center space-x-3'>
                 <div>
-                    <div className='w-14 sm:w-14 rounded-full'>
-                        <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName}></img>
+                    <div className='w-14 h-14 sm:w-14 rounded-full overflow-hidden'>
+                        <img src={selectedUser.profilePic || "/avatar.png"} alt={selectedUser.fullName} className='w-full h-full object-cover'></img>
                     </div>
                 </div>
 
