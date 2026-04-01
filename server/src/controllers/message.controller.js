@@ -95,7 +95,7 @@ export const getChatPartners = async (req,res) => {
                 {senderId: loggedInUserId},
                 {receiverId: loggedInUserId},
             ]
-        });
+        }).sort({ createdAt: -1 });
 
         const chatPartnersId = [
             ...new Set(
@@ -105,10 +105,100 @@ export const getChatPartners = async (req,res) => {
         ];
 
         const chatPartners = await User.find({ _id : {$in : chatPartnersId}}).select("-password");
-        return res.status(200).json(chatPartners);
+        
+        // Add latest message for each chat partner
+        const chatPartnersWithMessages = await Promise.all(
+            chatPartners.map(async (partner) => {
+                const latestMessage = await Message.findOne({
+                    $or: [
+                        {senderId: loggedInUserId, receiverId: partner._id},
+                        {senderId: partner._id, receiverId: loggedInUserId},
+                    ]
+                }).sort({ createdAt: -1 });
+
+                return {
+                    ...partner.toObject(),
+                    latestMessage: latestMessage
+                };
+            })
+        );
+
+        return res.status(200).json(chatPartnersWithMessages);
     }
     catch(error){
         console.error("Error in get chat partner controller: ", error);
         return res.status(500).json({message: "Internal Server Error"});
     }
 }
+
+export const deleteMessage = async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const userId = req.user._id;
+
+        const message = await Message.findById(messageId);
+        if (!message) {
+            return res.status(404).json({ message: "Message not found" });
+        }
+
+        // Only allow sender to delete their own message
+        if (message.senderId.toString() !== userId.toString()) {
+            return res.status(403).json({ message: "You can only delete your own messages" });
+        }
+
+        await Message.findByIdAndDelete(messageId);
+
+        // Emit deletion event to both users in real-time
+        const receiverSocketId = getReceiverSocketId(message.receiverId);
+        const senderSocketId = getReceiverSocketId(message.senderId);
+        
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("messageDeleted", { messageId });
+        }
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("messageDeleted", { messageId });
+        }
+
+        return res.status(200).json({ message: "Message deleted successfully", messageId });
+    } catch (error) {
+        console.error("Error in deleteMessage: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+export const deleteChat = async (req, res) => {
+    try {
+        const { userId: otherUserId } = req.params;
+        const loggedInUserId = req.user._id;
+
+        // Check if other user exists
+        const userExists = await User.exists({ _id: otherUserId });
+        if (!userExists) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Delete all messages between the two users
+        const result = await Message.deleteMany({
+            $or: [
+                { senderId: loggedInUserId, receiverId: otherUserId },
+                { senderId: otherUserId, receiverId: loggedInUserId },
+            ]
+        });
+
+        // Emit deletion event to both users
+        const receiverSocketId = getReceiverSocketId(otherUserId);
+        const senderSocketId = getReceiverSocketId(loggedInUserId);
+        
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("chatDeleted", { userId: loggedInUserId });
+        }
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("chatDeleted", { userId: otherUserId });
+        }
+
+        return res.status(200).json({ message: "Chat deleted successfully", deletedCount: result.deletedCount });
+    } catch (error) {
+        console.error("Error in deleteChat: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};

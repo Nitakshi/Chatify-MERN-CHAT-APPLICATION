@@ -1,16 +1,18 @@
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
+import { Trash2Icon } from "lucide-react";
 
 
 function ChatContainer() {
-  const { messages, getMessagesByUserId, selectedUser, isMessagesLoading, subscribeToMessages, unsubscribeFromMessages} = useChatStore();
+  const { messages, getMessagesByUserId, selectedUser, isMessagesLoading, subscribeToMessages, unsubscribeFromMessages, deleteMessage} = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
+  const [hoveredMessageId, setHoveredMessageId] = useState(null);
   
 
   // 1. Always work with a sorted version of messages
@@ -79,9 +81,13 @@ function ChatContainer() {
                   )}
 
                   <div className={`chat ${msg.senderId === authUser._id ? "chat-end" : "chat-start"}`}>
-                    <div className={`chat-bubble relative ${
-                      msg.senderId === authUser._id ? "bg-cyan-500 text-white" : "bg-slate-800 text-slate-200"
-                    }`}>
+                    <div 
+                      className={`chat-bubble relative ${
+                        msg.senderId === authUser._id ? "bg-cyan-500 text-white" : "bg-slate-800 text-slate-200"
+                      }`}
+                      onMouseEnter={() => setHoveredMessageId(msg._id)}
+                      onMouseLeave={() => setHoveredMessageId(null)}
+                    >
                       {msg.image && (
                         <img src={msg.image} alt="Shared" className="rounded-lg h-48 object-cover" />
                       )}
@@ -97,6 +103,16 @@ function ChatContainer() {
                           hour12: true,
                         })}
                       </p>
+                      
+                      {msg.senderId === authUser._id && hoveredMessageId === msg._id && !msg.isOptimistic && (
+                        <button
+                          onClick={() => deleteMessage(msg._id)}
+                          className="absolute -top-3 -right-3 bg-rose-500 hover:bg-rose-600 text-white p-1.5 rounded-full shadow-md transition-colors"
+                          title="Delete message"
+                        >
+                          <Trash2Icon className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

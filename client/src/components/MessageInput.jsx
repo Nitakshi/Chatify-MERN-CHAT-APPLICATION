@@ -2,14 +2,17 @@ import {useRef, useState} from 'react'
 import useKeyboardSound from '../hooks/useKeyboardSound'
 import { useChatStore } from '../store/useChatStore';
 import toast from "react-hot-toast";
-import { ImageIcon, SendIcon, XIcon } from "lucide-react";
+import { ImageIcon, SendIcon, XIcon, SmileIcon } from "lucide-react";
+import EmojiPicker from 'emoji-picker-react';
 
 function MessageInput() {
   const {playRandomKeyStrokeSound} = useKeyboardSound();
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   
   const fileInputRef = useRef(null);
+  const inputRef = useRef(null);
 
   const {sendMessage, isSoundEnabled} = useChatStore();
 
@@ -44,9 +47,19 @@ function MessageInput() {
     if(fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleEmojiClick = (emojiObject) => {
+    setText(prev => prev + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
 
   return (
-    <div className="w-full p-4 bg-slate-900/50 border-t border-slate-700/50">
+    <div className="w-full p-4 bg-slate-900/50 border-t border-slate-700/50 relative">
+      {showEmojiPicker && (
+        <div className="absolute bottom-24 left-4 z-50">
+          <EmojiPicker onEmojiClick={handleEmojiClick} theme="dark" />
+        </div>
+      )}
       {imagePreview && (
         <div className="mb-3 flex items-center px-2">
           <div className="relative">
@@ -69,6 +82,7 @@ function MessageInput() {
       <form onSubmit={handleSendMessage} className="flex items-center gap-3 w-full">
         <div className="flex-1 flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-3 focus-within:border-cyan-500/50 transition-all">
           <input
+            ref={inputRef}
             type="text"
             value={text}
             onChange={(e) => {
@@ -89,10 +103,22 @@ function MessageInput() {
 
           <button
             type="button"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className={`hover:text-cyan-400 transition-colors ${
+              showEmojiPicker ? "text-cyan-500" : "text-slate-400"
+            }`}
+            title="Add emoji"
+          >
+            <SmileIcon className="w-6 h-6" />
+          </button>
+
+          <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
             className={`hover:text-cyan-400 transition-colors ${
               imagePreview ? "text-cyan-500" : "text-slate-400"
             }`}
+            title="Add image"
           >
             <ImageIcon className="w-6 h-6" />
           </button>

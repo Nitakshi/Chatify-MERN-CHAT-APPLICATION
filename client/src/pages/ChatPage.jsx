@@ -7,9 +7,16 @@ import ChatsList from '../components/ChatsList';
 import ContactList from '../components/ContactList';
 import NoConversationPlaceholder from '../components/NoConversationPlaceholder';
 import ChatContainer from '../components/ChatContainer';
+import { useEffect } from 'react';
 
 function ChatPage() {
-  const {activeTab, selectedUser} = useChatStore();
+  const {activeTab, selectedUser, subscribeToAllMessages, unsubscribeFromAllMessages} = useChatStore();
+
+  useEffect(() => {
+    subscribeToAllMessages();
+    
+    return () => unsubscribeFromAllMessages();
+  }, [subscribeToAllMessages, unsubscribeFromAllMessages]);
 
   return (
     <div className='relative w-full max-w-[min(100vw-2rem,90rem)] h-[calc(100vh-3.5rem)] max-h-[90vh] min-h-[24rem]'>
