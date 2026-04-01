@@ -3,6 +3,7 @@ import {axiosInstance} from "../lib/axios";
 import toast from "react-hot-toast";
 import { useChatStore } from "./useChatStore";
 import {io} from "socket.io-client";
+import { logout } from "../../../server/src/controllers/auth.controller";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
 
@@ -99,6 +100,18 @@ export const useAuthStore = create((set,get) => ({
         }
     },
 
+    deleteUser: async () => {
+        try{
+            const res = await axiosInstance.delete("/auth/delete");
+            get().logout();
+            toast.success("Account deleted successfully");
+        }
+        catch(error){
+            console.log("Error in delete account", error);
+            toast.error(error.response?.data?.message || "Error deleting account");
+        }
+    },
+
     connectSocket: () => {
         const { authUser} = get();
         if(!authUser || get().socket?.connected) return;
@@ -120,4 +133,6 @@ export const useAuthStore = create((set,get) => ({
     disconnectSocket: () => {
         if(get().socket?.connected) get().socket.disconnect();
     },
+
+
 }));

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {signup, login, logout, updateProfile, checkAuth} from "../controllers/auth.controller.js";
+import {signup, login, logout, updateProfile, checkAuth, searchUsers, deleteUserAccount} from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { arcjetProtection } from "../middlewares/arcjet.middleware.js";
 
@@ -13,5 +13,8 @@ router.post('/logout',logout); //logout has to be post method because it modifie
 
 router.put("/update-profile", protectRoute, updateProfile);
 router.get("/check",protectRoute,checkAuth); //This route is used to check if the user is authenticated and to retrieve their profile information. 
-//TODO: Search User, Get User by ID, Get All Users, Delete User.
+//TODO: Search User,Delete User.
+router.get("/search", protectRoute, searchUsers);
+router.delete("/delete-account", protectRoute, deleteUserAccount);
+
 export default router;

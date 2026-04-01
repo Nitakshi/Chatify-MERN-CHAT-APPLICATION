@@ -127,3 +127,31 @@ export const checkAuth = async (req,res) => {
         return res.status(500).json({message: "Internal Server Error"});
     }
 }
+
+export const searchUsers = async(req,res) => {
+    const {query} = req.query;
+    try{
+        const user = await User.find({
+            fullName: { $regex: query, $options: "i"} //"i": insensitive
+        }).select("fullName profilePic _id");
+
+        if(!user) return res.status(402).json({message: "No user found"});
+
+        return res.status(200).json(user);
+    }
+    catch(error){
+        return res.status(500).json({message: "Search failed"});
+    }
+}
+
+export const deleteUserAccount = async (req,res) => {
+    try{
+        const userId = req.user._id;
+        await User.findByIdAndDelete(userId);
+        res.clearCookie("jwt");
+        return res.status(204).json({message: "Account deleted successfully"});
+    }
+    catch(error){
+        res.status(500).json({message: "Delete failed"});
+    }
+}
