@@ -2,6 +2,10 @@
 
 A full-stack real-time chat application built using the **MERN stack** with **Socket.io** for instant messaging. This project focuses on scalability, clean architecture, and production-ready features.
 
+### 🔐 Login Page
+
+<img src="./client/public/loginPage.png" width="700"/>
+
 ---
 
 ## 🚀 Features
