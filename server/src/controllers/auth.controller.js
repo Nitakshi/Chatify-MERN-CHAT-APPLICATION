@@ -4,6 +4,7 @@ import { registerValidation, loginValidation } from "../validators/auth.validato
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import {ENV} from "../lib/env.js";
 import cloudinary from "../lib/cloudinary.js";
+import Message from "../models/message.model.js";
 
 // Signup controller
 export const signup = async (req,res) => {
@@ -124,6 +125,33 @@ export const checkAuth = async (req,res) => {
     }
     catch(error){
         console.error("Error in checkAuth: ", error);
+        return res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+//Delete Account Handler
+export const deleteAccount = async (req,res) => {
+    try{
+        const userId = req.user._id;
+        
+        // Delete all messages where user is sender or receiver
+        await Message.deleteMany({
+            $or: [
+                {senderId: userId},
+                {receiverId: userId}
+            ]
+        });
+        
+        // Delete user from database
+        await User.findByIdAndDelete(userId);
+        
+        // Clear the JWT cookie
+        res.cookie("jwt", "",{maxAge:0});
+        
+        return res.status(200).json({message: "Account deleted successfully"});
+    }
+    catch(error){
+        console.error("Error in deleteAccount: ", error.message);
         return res.status(500).json({message: "Internal Server Error"});
     }
 }
