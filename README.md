@@ -9,24 +9,11 @@ A full-stack real-time chat application built using the **MERN stack** with **So
 <img src="./client/public/loginPage.png" width="700"/>
 
 ---
-### Signup Page
-
-<img src="./client/public/signup.png" width="700"/>
-
----
 ### Chat Interface And Features
 
-<img src="./client/public/chatInterface.png" width="700"/>
-<img src="./client/public/onlineSeen.png" width="700"/>
 <img src="./client/public/messageSent.png" width="700"/>
 <img src="./client/public/emojis.png" width="700"/>
-<img src="./client/public/deleteChat.png" width="700"/>
-<img src="./client/public/deleteMessage.png" width="700"/>
 <img src="./client/public/deleteAccount.png" width="700"/>
-
---- 
-### Logout Page
-<img src="./client/public/logout.png" width="700"/>
 
 ---
 ## 🚀 Features
