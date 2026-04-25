@@ -129,6 +129,14 @@ export const useAuthStore = create((set,get) => ({
 
         set({socket});
 
+        socket.on("connect", () => {
+            console.log("Socket connected", socket.id);
+        });
+
+        socket.on("connect_error", (error) => {
+            console.error("Socket connection error:", error);
+        });
+
         //listen for online users event
         socket.on("getOnlineUsers", (userIds) => {
             set({onlineUsers: userIds});
