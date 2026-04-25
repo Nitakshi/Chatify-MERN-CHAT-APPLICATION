@@ -2,13 +2,15 @@ import express from "express";
 import authRoutes from "./routes/auth.route.js";
 import {connectDB} from "./lib/db.js";
 import path from "path";
+import { fileURLToPath } from "url";
 import { ENV } from "./lib/env.js";
 import cookieParser from "cookie-parser";
 import messageRoutes from "./routes/message.route.js";
 import cors from "cors";
 import {app, server} from "./lib/socket.js";
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //Middlewares
 app.use(express.json({limit: "5mb"})); //Enables your Express application to read and process JSON data sent from clients (e.g., via POST, PUT, or PATCH requests)
