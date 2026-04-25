@@ -21,11 +21,11 @@ app.use("/api/messages", messageRoutes);
 
 //make ready for deployment 
 if(ENV.NODE_ENV === "production"){
-    app.use(express.static(path.join(__dirname,"../client","dist"))); //“Serve all files inside client/dist as static files”
-    //__dirname means the current directory of the server, and we are joining it with "../client/dist" to get the absolute path to the client/dist directory. This allows Express to serve the static files (like index.html, CSS, JS) from that directory when the application is running in production mode.
+    app.use(express.static(path.join(__dirname,"../../client","dist"))); //“Serve all files inside client/dist as static files”
+    //__dirname means the current directory of the server, and we are joining it with "../../client/dist" to get the absolute path to the client/dist directory. This allows Express to serve the static files (like index.html, CSS, JS) from that directory when the application is running in production mode.
     //For ANY route not handled above, send index.html (Any other routes other than above)
     app.get("*", (req,res) => {
-        res.sendFile(path.join(__dirname, "../client","dist","index.html")); //This means that for any route that is not handled by the above routes (like /api/auth), the server will respond by sending the index.html file from the client/dist directory. This is important for client-side routing in single-page applications (SPAs) where the client-side JavaScript handles routing and needs to receive index.html for all routes to work properly.
+        res.sendFile(path.join(__dirname, "../../client","dist","index.html")); //This means that for any route that is not handled by the above routes (like /api/auth), the server will respond by sending the index.html file from the client/dist directory. This is important for client-side routing in single-page applications (SPAs) where the client-side JavaScript handles routing and needs to receive index.html for all routes to work properly.
     })
 }
 
