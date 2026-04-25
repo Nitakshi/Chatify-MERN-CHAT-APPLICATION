@@ -4,6 +4,12 @@ A full-stack real-time chat application built using the **MERN stack** with **So
 
 ---
 
+### Live Link
+ ```
+https://chatify-5umr.onrender.com
+
+```
+
 ### 🔐 Login Page
 
 <img src="./client/public/loginPage.png" width="700"/>
